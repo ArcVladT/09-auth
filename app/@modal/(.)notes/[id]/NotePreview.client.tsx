@@ -13,7 +13,11 @@ interface Props {
 const NotePreviewClient = ({ noteId }: Props) => {
 	const router = useRouter();
 
-	const { data: note } = useQuery({
+	const {
+		data: note,
+		isLoading,
+		error,
+	} = useQuery({
 		queryKey: ["note", noteId],
 		queryFn: () => fetchNoteById(noteId),
 		refetchOnMount: false,
@@ -26,20 +30,22 @@ const NotePreviewClient = ({ noteId }: Props) => {
 			<div>
 				<main className={css.main}>
 					<div className={css.container}>
-						<div className={css.item}>
-							<div className={css.header}>
-								<h2>{note.title}</h2>
+						{!isLoading && !error && note && (
+							<div className={css.item}>
+								<div className={css.header}>
+									<h2>{note.title}</h2>
+								</div>
+								<p className={css.content}>{note.content}</p>
+								<p className={css.date}>
+									{note.updatedAt
+										? `Updated at ${new Date(note.updatedAt).toLocaleString()}`
+										: `Created at ${new Date(note.createdAt).toLocaleString()}`}
+								</p>
+								<button className={css.backBtn} type="button" onClick={close}>
+									Close
+								</button>
 							</div>
-							<p className={css.content}>{note.content}</p>
-							<p className={css.date}>
-								{note.updatedAt
-									? `Updated at ${new Date(note.updatedAt).toLocaleString()}`
-									: `Created at ${new Date(note.createdAt).toLocaleString()}`}
-							</p>
-							<button className={css.backBtn} type="button" onClick={close}>
-								Close
-							</button>
-						</div>
+						)}
 					</div>
 				</main>
 			</div>
